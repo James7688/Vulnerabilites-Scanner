@@ -69,3 +69,7 @@ Enter the target IP or URL: https://www.example.com
 Scanning ports on https://www.example.com...
 Open ports: [80, 443]
 Vulnerabilities detected: None
+
+## CREDIT:
+
+Quy Anh Nguyen - Developer
