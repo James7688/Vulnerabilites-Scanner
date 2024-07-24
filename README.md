@@ -15,8 +15,8 @@ To get started with the Vulnerability Scanner, follow these steps:
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/yourusername/vulnerability-scanner.git
-    cd vulnerability-scanner
+    git clone https://github.com/yourusername/Vulnerability-scanner.git
+    cd Vulnerability-scanner
     ```
 
 2. **Create a Virtual Environment:**
