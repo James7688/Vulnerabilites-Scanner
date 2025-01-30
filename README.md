@@ -1,75 +1,72 @@
 # Vulnerability Scanner
 
-A Python-based Vulnerability Scanner designed to detect open ports and scan for common vulnerabilities. This tool provides an easy way to assess the security of your network and applications.
+## Overview
+
+The **Vulnerability Scanner** is an advanced Python-based tool designed to scan websites and servers for open ports, detect services, and identify potential security vulnerabilities. It offers multiple scanning modes to suit different needs, from quick scans to in-depth security analysis.
 
 ## Features
 
-- **Port Scanning:** Detect open ports on a given IP address or URL.
-- **Vulnerability Detection:** Basic checks to identify known vulnerabilities associated with open ports.
-- **Progress Display:** Real-time updates on the scanning process.
+- **Deep Scan Mode**: Scans all 65,535 ports for a comprehensive security check.
+- **Simple Scan Mode**: Scans only the most common 1,024 ports for a quicker analysis.
+- **Custom Scan Mode**: Allows users to define a specific port range and select what information to retrieve.
+- **Troll Scan Mode**: A fun mode that displays humorous messages and famous internet memes while scanning.
+- **Error Handling**: Ensures that all errors are ignored so the scan completes without interruptions.
+- **Security Analysis**:
+  - Detects open ports and running services.
+  - Identifies potential vulnerabilities (e.g., outdated software, misconfigurations).
+  - Checks for SQL Injection and DDoS vulnerabilities.
+  - Detects SSH availability.
 
 ## Installation
 
-To get started with the Vulnerability Scanner, follow these steps:
+### Prerequisites
 
-1. **Clone the Repository:**
+Ensure you have **Python 3.x** installed. Then, install the required dependencies:
 
-    ```bash
-    git clone https://github.com/James7688/Vulnerabilites-Scanner.git
-    cd Vulnerabilites-Scanner
-    ```
+```sh
+pip install -r requirements.txt
+```
 
-2. **Create a Virtual Environment:**
+### Required Packages
 
-    ```bash
-    python -m venv .venv
-    ```
+The following Python packages are required:
 
-3. **Activate the Virtual Environment:**
-
-    - On Windows:
-
-        ```bash
-        .venv\Scripts\activate
-        ```
-
-    - On macOS/Linux:
-
-        ```bash
-        source .venv/bin/activate
-        ```
-
-4. **Install the Dependencies:**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+- `nmap`
+- `requests`
+- `progressbar`
+- `colorama`
+- `beautifulsoup4`
+- `urllib3`
 
 ## Usage
 
-To use the Vulnerability Scanner, follow these steps:
+Run the script and follow the prompts:
 
-1. **Run the Script:**
-
-    ```bash
-    python main.py
-    ```
-
-2. **Follow the Prompts:**
-
-    - **Enter the target IP or URL**: Provide the IP address or URL you want to scan.
-    - **Choose the type of scan**: Select from port scanning or vulnerability detection.
-    - **Review the Results**: The tool will display scanning progress and results.
-
-## Example
-
-```bash
+```sh
 python main.py
-Enter the target IP or URL: https://www.example.com
-Scanning ports on https://www.example.com...
-Open ports: [80, 443]
-Vulnerabilities detected: None
 ```
 
-## CREDIT:
+### Scan Modes
+
+- **Deep Scan**: Comprehensive scan (slow but detailed).
+- **Simple Scan**: Quick scan for basic security checks.
+- **Custom Scan**: Define your own scan settings.
+- **Troll Scan**: A fun scan mode with jokes.
+
+### Example Usage
+
+```sh
+Enter the target (IP or domain): example.com
+Choose scan mode: 
+  1 - Deep Scan
+  2 - Simple Scan
+  3 - Custom Scan
+  4 - Troll Scan
+```
+
+## Disclaimer
+
+This tool is intended for ethical security testing and educational purposes only. **Do not use it to scan systems without permission.** Unauthorized scanning may be illegal in some jurisdictions.
+
+## Credit
 Quy Anh Nguyen - Developer
