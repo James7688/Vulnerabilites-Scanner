@@ -37,6 +37,7 @@ The following Python packages are required:
 - `colorama`
 - `beautifulsoup4`
 - `urllib3`
+# Please download nmap in order for this vulnerability scanner to work !
 
 ## Usage
 
