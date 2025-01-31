@@ -68,7 +68,7 @@ Choose scan mode:
 
 ## Disclaimer
 
-This tool is intended for ethical security testing and educational purposes only. **Do not use it to scan systems without permission.** Unauthorized scanning may be illegal in some jurisdictions.
+This tool is intended for ethical security testing and educational purposes only. **Do not use it to scan systems without permission.** Unauthorized scanning may be illegal in some jurisdictions. ( Actually, I recommend you guys to do it )
 
 ## Credit
 Quy Anh Nguyen - Developer
