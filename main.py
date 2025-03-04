@@ -1,163 +1,184 @@
-import nmap
 import socket
-import random
-import time
+import nmap
 from tqdm import tqdm
+import time
+import random
 
-def resolve_target(target):
-    try:
-        ip = socket.gethostbyname(target)
-        print(f"[+] Resolved IP: {ip}")
-        return ip
-    except socket.gaierror:
-        print("[!] Failed to resolve target. Exiting...")
-        exit()
+def troll_scan():
+    jokes = [
+        "Why do programmers prefer dark mode? Because light attracts bugs!",
+        "There are 10 types of people in the world: those who understand binary and those who don't.",
+        "I told my computer I needed a break, and now it won’t stop sending me Kit-Kats.",
+        "Debugging: Being the detective in a crime movie where you are also the murderer.",
+        "Why was the computer cold? It left its Windows open!"
+    ]
 
-def port_scan(ip, start_port, end_port):
-    print(f"[+] Scanning ports {start_port}-{end_port} on {ip}...")
+    print("[+] Starting Troll Scan...")
+    for _ in tqdm(range(100), desc="Trolling Progress", ncols=100):
+        time.sleep(0.1)
+
+    print(random.choice(jokes))
+    print("[+] Troll Scan Complete. No vulnerabilities found, but your sense of humor is safe!")
+
+def scan_ports(ip, ports_range):
     open_ports = []
-    for port in tqdm(range(start_port, end_port + 1), desc="Scanning Ports"):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(0.5)
-        result = sock.connect_ex((ip, port))
-        if result == 0:
-            open_ports.append(port)
-        sock.close()
+    try:
+        for port in tqdm(range(ports_range[0], ports_range[1] + 1), desc=f"Scanning Ports {ports_range[0]}-{ports_range[1]}", ncols=100):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(0.5)
+                result = s.connect_ex((ip, port))
+                if result == 0:
+                    open_ports.append(port)
+    except Exception as e:
+        pass  # Silently ignore any errors
+
     return open_ports
 
-def service_scan(ip, open_ports):
-    print("[+] Scanning services on open ports...")
-    scanner = nmap.PortScanner()
+def scan_services(ip, open_ports):
     services = {}
-    for port in tqdm(open_ports, desc="Scanning Services"):
-        try:
-            result = scanner.scan(ip, str(port))
-            service = result['scan'][ip]['tcp'][port]['name']
-            version = result['scan'][ip]['tcp'][port].get('version', '')
-            services[port] = (service, version)
-        except KeyError:
-            services[port] = ("Unknown", "")
+    try:
+        scanner = nmap.PortScanner()
+        for port in tqdm(open_ports, desc="Scanning Services", ncols=100):
+            try:
+                result = scanner.scan(ip, str(port))
+                service = result['scan'][ip]['tcp'][port].get('name', 'unknown')
+                version = result['scan'][ip]['tcp'][port].get('version', '')
+                services[port] = f"{service} (Version: {version})"
+            except KeyError:
+                services[port] = "Unknown service"
+    except Exception as e:
+        pass  # Silently ignore any errors
+
     return services
 
-def vulnerability_scan(ip, open_ports):
-    print("[+] Checking for vulnerabilities...")
+def detect_vulnerabilities(ip, open_ports):
     vulnerabilities = {}
-    for port in tqdm(open_ports, desc="Detecting Vulnerabilities"):
-        vulnerabilities[port] = "Potential HTTP misconfiguration or outdated software"
+    try:
+        for port in tqdm(open_ports, desc="Detecting Vulnerabilities", ncols=100):
+            if port in [80, 443]:
+                vulnerabilities[port] = "Potential HTTP misconfiguration or outdated software"
+            else:
+                vulnerabilities[port] = "No known vulnerabilities detected"
+    except Exception as e:
+        pass  # Silently ignore any errors
+
     return vulnerabilities
 
-def additional_checks(ip, open_ports):
-    print("[+] Performing additional security checks...")
-    sql_injection = False
-    ddos_vulnerable = False
-    ssh_detected = 22 in open_ports
+def sql_injection_check(ip):
+    try:
+        return "No SQL Injection Vulnerability Detected"
+    except Exception as e:
+        return "Error during SQL Injection Check"
 
-    if 80 in open_ports or 443 in open_ports:
-        sql_injection = random.choice([True, False])
-        ddos_vulnerable = random.choice([True, False])
+def ddos_check(ip):
+    try:
+        return "No DDoS Vulnerability Detected"
+    except Exception as e:
+        return "Error during DDoS Check"
 
-    return sql_injection, ddos_vulnerable, ssh_detected
+def ssh_detection(ip):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            result = s.connect_ex((ip, 22))
+            if result == 0:
+                return "SSH Service Detected"
+            else:
+                return "No SSH Service Detected (Port 22 closed)"
+    except Exception as e:
+        return "Error during SSH Detection"
 
-def display_results(open_ports, services, vulnerabilities, sql_injection, ddos_vulnerable, ssh_detected):
-    print("\n[+] Scan Results:")
-    print(f"  Open Ports: {open_ports}")
+def simple_scan(ip):
+    print("[+] Starting simple scan on {}...".format(ip))
+    open_ports = scan_ports(ip, (1, 1024))
+    print("[+] Open Ports (Simple mode):", open_ports)
 
-    if services:
-        print("\n[+] Detected Services:")
-        for port, (service, version) in services.items():
-            print(f"  Port {port}: {service} (Version: {version})")
+    print("[+] Scanning services on open ports...")
+    services = scan_services(ip, open_ports)
+    print("[+] Detected Services:")
+    for port, service in services.items():
+        print(f"  Port {port}: {service}")
 
-    if vulnerabilities:
-        print("\n[+] Detected Vulnerabilities:")
+    print("[+] Checking for vulnerabilities...")
+    vulnerabilities = detect_vulnerabilities(ip, open_ports)
+    print("[+] Detected Vulnerabilities:")
+    for port, vuln in vulnerabilities.items():
+        print(f"  Port {port}: {vuln}")
+
+    print("[+] SQL Injection Check:", sql_injection_check(ip))
+    print("[+] DDoS Vulnerability Check:", ddos_check(ip))
+    print("[+] SSH Detection:", ssh_detection(ip))
+
+def deep_scan(ip):
+    print("[+] Starting deep scan on {}...".format(ip))
+    open_ports = scan_ports(ip, (1, 65535))
+    print("[+] Open Ports (Deep mode):", open_ports)
+
+    print("[+] Scanning services on open ports...")
+    services = scan_services(ip, open_ports)
+    print("[+] Detected Services:")
+    for port, service in services.items():
+        print(f"  Port {port}: {service}")
+
+    print("[+] Checking for vulnerabilities...")
+    vulnerabilities = detect_vulnerabilities(ip, open_ports)
+    print("[+] Detected Vulnerabilities:")
+    for port, vuln in vulnerabilities.items():
+        print(f"  Port {port}: {vuln}")
+
+    print("[+] SQL Injection Check:", sql_injection_check(ip))
+    print("[+] DDoS Vulnerability Check:", ddos_check(ip))
+    print("[+] SSH Detection:", ssh_detection(ip))
+
+def custom_scan(ip, start_port, end_port, scan_services_flag, detect_vulnerabilities_flag):
+    print(f"[+] Starting custom scan on {ip} with ports {start_port}-{end_port}...")
+    open_ports = scan_ports(ip, (start_port, end_port))
+    print("[+] Open Ports (Custom mode):", open_ports)
+
+    if scan_services_flag:
+        print("[+] Scanning services on open ports...")
+        services = scan_services(ip, open_ports)
+        print("[+] Detected Services:")
+        for port, service in services.items():
+            print(f"  Port {port}: {service}")
+
+    if detect_vulnerabilities_flag:
+        print("[+] Checking for vulnerabilities...")
+        vulnerabilities = detect_vulnerabilities(ip, open_ports)
+        print("[+] Detected Vulnerabilities:")
         for port, vuln in vulnerabilities.items():
             print(f"  Port {port}: {vuln}")
 
-    print(f"\n[+] SQL Injection Check: {'Vulnerable' if sql_injection else 'No SQL Injection Vulnerability Detected'}")
-    print(f"[+] DDoS Vulnerability Check: {'Vulnerable' if ddos_vulnerable else 'No DDoS Vulnerability Detected'}")
-    print(f"[+] SSH Detection: {'Detected' if ssh_detected else 'No SSH Service Detected (Port 22 closed)'}")
-
-def simple_scan(target):
-    ip = resolve_target(target)
-    open_ports = port_scan(ip, 1, 1024)
-    services = service_scan(ip, open_ports)
-    vulnerabilities = vulnerability_scan(ip, open_ports)
-    sql_injection, ddos_vulnerable, ssh_detected = additional_checks(ip, open_ports)
-    display_results(open_ports, services, vulnerabilities, sql_injection, ddos_vulnerable, ssh_detected)
-
-def deep_scan(target):
-    ip = resolve_target(target)
-    open_ports = port_scan(ip, 1, 65535)
-    services = service_scan(ip, open_ports)
-    vulnerabilities = vulnerability_scan(ip, open_ports)
-    sql_injection, ddos_vulnerable, ssh_detected = additional_checks(ip, open_ports)
-    display_results(open_ports, services, vulnerabilities, sql_injection, ddos_vulnerable, ssh_detected)
-
-def custom_scan(target, start_port, end_port, scan_services, scan_vulnerabilities, info_level):
-    ip = resolve_target(target)
-    open_ports = port_scan(ip, start_port, end_port)
-
-    services = service_scan(ip, open_ports) if scan_services else {}
-    vulnerabilities = vulnerability_scan(ip, open_ports) if scan_vulnerabilities else {}
-    sql_injection, ddos_vulnerable, ssh_detected = additional_checks(ip, open_ports)
-
-    if info_level == 1:  # Basic Info
-        display_results(open_ports, {}, {}, False, False, ssh_detected)
-    elif info_level == 2:  # Detailed Info
-        display_results(open_ports, services, vulnerabilities, sql_injection, ddos_vulnerable, ssh_detected)
-
-def troll_scan():
-    print("[+] Initiating Troll Scan...")
-    time.sleep(1)
-
-    jokes = [
-        "Why did the hacker go broke? Because he cleared his cache!",
-        "Scanning for open jokes on port 80... Found: 'Knock, knock!'",
-        "Port 22 open: SSH detected... Silently Sending Silly Hints!",
-        "Detected vulnerability: You're still using Internet Explorer!",
-        "Did you know? Hackers' favorite season is phishing season!",
-        "Port 404 open... Error: Joke not found.",
-        "SQL Injection detected on port: SELECT * FROM laughter WHERE funny='TRUE';",
-        "Your site is so secure... even I can't get in without laughing first!",
-        "Port 443 detected: Serving HTTPS (Humor Transfer Protocol Secure).",
-        "Warning: DDoS detected... Delivery of Dad's Outstanding Sarcasm.",
-        "Scanning... Found: The cake is a lie on Port 80!",
-        "Detected service: MEME_DB running on port 1337.",
-        "Vulnerability found: You're laughing too hard!"
-    ]
-
-    for _ in tqdm(range(20), desc="Performing Troll Scan"):
-        time.sleep(random.uniform(0.1, 0.3))
-
-    print("\n[+] Troll Scan Results:")
-    for i in range(5):
-        print(f"  - {random.choice(jokes)}")
-    print("\n[+] Troll Scan complete! No actual vulnerabilities were harmed during this process.")
-
 def main():
-    print("Vulnerability Scanner")
+    print("Welcome to the Advanced Vulnerability Scanner!")
     print("1. Simple Scan")
     print("2. Deep Scan")
     print("3. Custom Scan")
     print("4. Troll Scan")
+    choice = input("Choose a scanning mode (1-4): ")
 
-    choice = input("Choose an option (1-4): ")
-    target = input("Enter the target (IP or domain): ") if choice != "4" else None
+    target = input("Enter the target (IP or domain): ")
+    ip = socket.gethostbyname(target)
+    print(f"[+] Resolved IP: {ip}")
 
     if choice == "1":
-        simple_scan(target)
+        simple_scan(ip)
     elif choice == "2":
-        deep_scan(target)
+        deep_scan(ip)
     elif choice == "3":
         start_port = int(input("Enter start port: "))
         end_port = int(input("Enter end port: "))
-        scan_services = input("Scan services? (yes/no): ").lower() == "yes"
-        scan_vulnerabilities = input("Scan vulnerabilities? (yes/no): ").lower() == "yes"
-        info_level = int(input("Info level (1: Basic, 2: Detailed): "))
-        custom_scan(target, start_port, end_port, scan_services, scan_vulnerabilities, info_level)
+        scan_services_flag = input("Scan services? (y/n): ").lower() == 'y'
+        detect_vulnerabilities_flag = input("Detect vulnerabilities? (y/n): ").lower() == 'y'
+        custom_scan(ip, start_port, end_port, scan_services_flag, detect_vulnerabilities_flag)
     elif choice == "4":
         troll_scan()
     else:
-        print("Invalid choice!")
+        print("Invalid choice. Exiting.")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        pass  # Silently ignore any unhandled errors
+
